@@ -1,6 +1,17 @@
 # Momentum — Personal Productivity PWA
 
-A local-first personal productivity workspace built with React, TypeScript, Vite, Tailwind CSS, IndexedDB, Recharts and Lucide.
+A dark, responsive, local-first productivity workspace built with React, TypeScript and Vite.
+
+## Features
+
+- Dashboard with task totals and completion overview
+- Create and complete tasks with due dates and priority
+- Create and check daily habits
+- Calendar view for tasks with due dates
+- Activity history and task archive
+- Search tasks
+- Export and restore a JSON backup
+- IndexedDB persistence in the current browser
 
 ## Run locally
 
@@ -22,12 +33,8 @@ Import this repository in Vercel. Framework preset: **Vite**. Build command: `np
 
 ## Data and privacy
 
-No account or authentication is required. Tasks, habits, logs, settings and history are stored in IndexedDB in the current browser profile. Export a JSON backup in Settings before clearing browser data or moving to another device. No automatic cross-device synchronization is implemented.
+No account or authentication is required. Tasks, habits and history are stored in IndexedDB in the current browser profile. Export a backup before clearing browser data or moving to another device. Automatic cross-device synchronization is not implemented.
 
-## PWA and notifications
+## PWA
 
-The web app manifest and service worker cache the application shell and static assets for offline startup. Browser notification permission can be requested in Settings. This client-only implementation does not provide guaranteed scheduled notifications while the browser is fully closed; reliable closed-app push requires a server-side Web Push service and VAPID credentials.
-
-## Current scope
-
-The app includes dashboard, task list and board views, habit tracking, calendar, statistics, activity history, archive, search, CSV/JSON backup and restore, browser permission testing, responsive navigation and offline shell caching. Advanced recurrence generation, full reminder scheduling, notification inbox/snooze, category CRUD, full streak semantics for weekly-target habits, and exhaustive automated acceptance tests remain future work.
+The project includes a web app manifest and a service worker for caching the application shell. This is a client-side app; it does not provide server-backed push notifications or cloud synchronization.
