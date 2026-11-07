@@ -1,40 +1,40 @@
 # Momentum — Personal Productivity PWA
 
-A full local-first productivity workspace built with React, TypeScript and Vite.
+A responsive, local-first productivity workspace built with React, TypeScript and Vite.
 
 ## Features
 
-- Dashboard with task overview and progress metrics
-- Task management with priority, status, due dates and archive
-- Kanban board and list view
-- Habit tracking, daily check-ins and streak calculations
-- Calendar with task and habit activity
-- Statistics charts and completion trends
-- Activity history, search and filters
-- JSON backup/restore and CSV export
-- IndexedDB persistence, responsive layout and PWA offline shell
-- Browser notification permission controls (scheduled notifications while the app is fully closed are not guaranteed)
+- Dashboard with workload summary, completion rate, overdue tasks and today's habit check-ins
+- Task creation and editing with category, priority, due date/time and status
+- List and Kanban board views, status/priority filters, search, archive and permanent deletion
+- Habit creation with daily, weekdays, weekly-target and goal schedules, check-ins and streaks
+- Monthly calendar with due-date tasks and upcoming list
+- Statistics with weekly task/habit activity and task category chart
+- Activity history
+- JSON backup and restore, CSV export
+- IndexedDB local persistence, responsive UI and PWA manifest/service worker
+- Browser notification permission request; scheduled notifications while the browser is fully closed are not guaranteed
 
-## Full source restoration
-
-The complete original app and stylesheet are included as gzip files at `src/App.tsx.gz` and `src/style.css.gz`. The npm lifecycle automatically restores them before running Vite:
+## Run locally
 
 ```bash
 npm install
 npm run dev
-npm run build
 ```
 
-You do not need to unpack these files manually. If editing the restored source, note that the next `npm run dev` or `npm run build` restores the committed compressed originals again.
+## Production build
 
-## Data and privacy
-
-No account or backend is required. Data is stored in IndexedDB in the current browser profile. Use the JSON backup before clearing browser data or moving to another device. Cross-device synchronization is not implemented.
+```bash
+npm run build
+npm run preview
+```
 
 ## Deploy to Vercel
 
-Import this repository. Framework preset: **Vite**. Build command: `npm run build`. Output directory: `dist`.
+Framework: Vite. Build command: `npm run build`. Output directory: `dist`.
 
-## Current scope notes
+## Data and privacy
 
-Advanced recurrence generation, persistent scheduled push notifications, notification inbox/snooze, cross-device sync, and full automated acceptance coverage remain future work.
+No account or backend is required. Tasks, habits, logs and settings are stored in IndexedDB in the current browser profile. Export a JSON backup before clearing browser data or moving devices. Cross-device sync is not implemented.
+
+Original source snapshots remain in `src/App.tsx.gz` and `src/style.css.gz` as archival copies. The build uses readable TypeScript and CSS files in `src/`.
