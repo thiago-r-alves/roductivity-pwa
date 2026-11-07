@@ -1,7 +1,7 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
-  Activity, Archive, BarChart3, Bell, CalendarDays, Check, CheckCircle2, ChevronLeft,
+  Activity, Archive, BarChart3, Bell, CalendarDays, Check, CheckCircle2, ChevronLeft, Cloud, CloudOff,
   ChevronRight, Circle, Clock3, Download, Flame, LayoutDashboard, List, ListTodo,
   MoreHorizontal, Pencil, Plus, Search, Settings, Target, Trash2, Upload, Wifi, X
 } from 'lucide-react';
@@ -10,6 +10,7 @@ import {
   Tooltip, XAxis, YAxis
 } from 'recharts';
 import { loadData, replaceData, saveData } from './lib/db';
+import { connectCloudSync, disconnectCloudSync, getStoredSyncKey, type CloudSyncStatus } from './lib/cloud';
 import type { Activity as ActivityItem, AppData, Habit, HabitLog, Priority, Task, TaskStatus } from './types';
 
 type Page = 'Dashboard' | 'Tasks' | 'Habits' | 'Calendar' | 'Statistics' | 'History' | 'Archive' | 'Settings';
@@ -87,6 +88,9 @@ function App() {
   const [taskModal, setTaskModal] = useState<Task | 'new' | null>(null);
   const [habitModal, setHabitModal] = useState(false);
   const [toast, setToast] = useState('');
+  const [syncKeyDraft, setSyncKeyDraft] = useState('');
+  const [cloudConnected, setCloudConnected] = useState(Boolean(getStoredSyncKey()));
+  const [cloudStatus, setCloudStatus] = useState<CloudSyncStatus>(getStoredSyncKey() ? 'syncing' : 'disconnected');
   const [online, setOnline] = useState(navigator.onLine);
   const [menuTask, setMenuTask] = useState<string | null>(null);
   const [month, setMonth] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
@@ -96,11 +100,41 @@ function App() {
     loadData().then(saved => { if (alive) { setData(saved); setLoaded(true); } }).catch(err => { console.error(err); if (alive) setLoaded(true); });
     const on = () => setOnline(true); const off = () => setOnline(false);
     window.addEventListener('online', on); window.addEventListener('offline', off);
-    return () => { alive = false; window.removeEventListener('online', on); window.removeEventListener('offline', off); };
+    const onCloudStatus = (event: Event) => setCloudStatus((event as CustomEvent<CloudSyncStatus>).detail);
+    window.addEventListener('momentum-cloud-status', onCloudStatus);
+    return () => { alive = false; window.removeEventListener('online', on); window.removeEventListener('offline', off); window.removeEventListener('momentum-cloud-status', onCloudStatus); };
   }, []);
   useEffect(() => { if (loaded) saveData(data).catch(console.error); }, [data, loaded]);
 
   const flash = (message: string) => { setToast(message); window.setTimeout(() => setToast(''), 2400); };
+  const connectCloud = async () => {
+    try {
+      const merged = await connectCloudSync(syncKeyDraft, data);
+      await replaceData(merged);
+      setData(merged);
+      setCloudConnected(true);
+      setSyncKeyDraft('');
+      flash('Cloud sync connected');
+    } catch (error) {
+      setCloudStatus('error');
+      flash(error instanceof Error ? error.message : 'Could not connect to cloud sync');
+    }
+  };
+  const disconnectCloud = () => {
+    disconnectCloudSync();
+    setCloudConnected(false);
+    setCloudStatus('disconnected');
+    flash('Cloud sync disconnected on this device');
+  };
+  const cloudStatusLabel = cloudStatus === 'synced'
+    ? 'Connected · all changes synced'
+    : cloudStatus === 'syncing'
+      ? 'Syncing workspace…'
+      : cloudStatus === 'offline'
+        ? 'Offline · changes will sync when online'
+        : cloudStatus === 'error'
+          ? 'Sync issue · check the key or connection'
+          : 'Not connected on this device';
   const activeTasks = useMemo(() => data.tasks.filter((t: Task) => !t.archivedAt), [data.tasks]);
   const filteredTasks = useMemo(() => activeTasks.filter((t: Task) => {
     const words = (t.title + ' ' + t.description + ' ' + t.category).toLowerCase();
@@ -290,11 +324,18 @@ function App() {
         {page === 'Settings' && <>
           {heading('Settings', 'Manage your workspace, data and preferences.')}
           <div className="settings-layout"><section className="panel settings-panel">
+            <div className="settings-section"><div className="settings-icon"><Cloud size={18}/></div><div className="settings-copy"><h3>Cloud sync</h3><p>Keep tasks, habits, logs and activity in sync across your devices. Momentum also keeps a local offline copy in this browser.</p>
+              {cloudConnected ? <div className="settings-actions"><span className={cloudStatus === 'synced' ? 'storage-note' : 'permission-status'}><Cloud size={14}/> {cloudStatusLabel}</span><button className="button secondary" onClick={disconnectCloud}><CloudOff size={14}/> Disconnect on this device</button></div> : <>
+                <label className="field cloud-key-field">Private sync key<input type="password" autoComplete="off" spellCheck={false} value={syncKeyDraft} onChange={e => setSyncKeyDraft(e.target.value)} placeholder="Paste your private sync key"/></label>
+                <div className="settings-actions"><button className="button primary" disabled={!loaded || syncKeyDraft.trim().length < 32} onClick={() => void connectCloud()}><Cloud size={14}/> Connect & sync current workspace</button></div>
+              </>}
+              <p className="cloud-security-note">Use the same key on each device. Anyone with this key can access and edit your workspace, so keep it private.</p>
+            </div></div>
             <div className="settings-section"><div className="settings-icon"><Download size={18}/></div><div className="settings-copy"><h3>Data & backups</h3><p>Export a copy of your tasks, habits, logs and activity. Restore it on this device later.</p><div className="settings-actions"><button className="button secondary" onClick={exportJson}><Download size={14}/> Export JSON backup</button><button className="button secondary" onClick={exportCsv}><Download size={14}/> Export tasks CSV</button><label className="button secondary upload-button"><Upload size={14}/> Restore backup<input type="file" accept="application/json,.json" onChange={e => { const file = e.target.files?.[0]; if (file) void importJson(file); e.currentTarget.value = ''; }}/></label></div></div></div>
             <div className="settings-section"><div className="settings-icon"><Bell size={18}/></div><div className="settings-copy"><h3>Notifications</h3><p>Request browser notification permission. Scheduled notifications while the browser is fully closed are not guaranteed.</p><div className="settings-actions"><button className="button secondary" onClick={() => void requestNotifications()}>Request permission</button><span className="permission-status">{data.settings.notifications ? 'Permission granted' : ('Notification' in window ? Notification.permission : 'Not supported')}</span></div></div></div>
-            <div className="settings-section"><div className="settings-icon"><Wifi size={18}/></div><div className="settings-copy"><h3>Privacy & storage</h3><p>Your information stays in IndexedDB in this browser. Clearing browser data can remove it. Export a backup before changing devices.</p><div className="storage-note"><CheckCircle2 size={15}/> Local-first storage active</div></div></div>
-            <div className="settings-section danger-zone"><div className="settings-icon"><Trash2 size={18}/></div><div className="settings-copy"><h3>Reset workspace</h3><p>Permanently remove all tasks, habits, logs and activity from this browser.</p><button className="button danger" onClick={async () => { if (window.confirm('Permanently delete all Momentum data from this browser? Export a backup first if needed.')) { const fresh: AppData = { ...EMPTY, settings: { notifications: false, quietHours: false } }; await replaceData(fresh); setData(fresh); flash('Workspace reset'); } }}>Delete all local data</button></div></div>
-          </section><aside className="panel about-panel"><div className="about-logo">M</div><h3>Momentum</h3><span>Personal productivity workspace</span><p>Version 1.0.0</p><div className="about-divider"/><div><small>STORAGE</small><b>IndexedDB · This device</b></div><div><small>APP MODE</small><b>Progressive Web App</b></div><div><small>SYNC</small><b>Manual backup / restore</b></div></aside></div>
+            <div className="settings-section"><div className="settings-icon"><Wifi size={18}/></div><div className="settings-copy"><h3>Privacy & storage</h3><p>Your data is cached in IndexedDB for offline use and synced to private cloud storage when connected. Clearing browser data removes the local copy, but your cloud workspace remains available with your sync key.</p><div className="storage-note"><CheckCircle2 size={15}/> Local cache + private cloud</div></div></div>
+            <div className="settings-section danger-zone"><div className="settings-icon"><Trash2 size={18}/></div><div className="settings-copy"><h3>Reset workspace</h3><p>Permanently remove all tasks, habits, logs and activity from this device and the connected cloud workspace.</p><button className="button danger" onClick={async () => { if (window.confirm('Permanently delete all Momentum data from this device and, when connected, the cloud workspace? Export a backup first if needed.')) { const fresh: AppData = { ...EMPTY, settings: { notifications: false, quietHours: false } }; await replaceData(fresh); setData(fresh); flash('Workspace reset'); } }}>Delete all workspace data</button></div></div>
+          </section><aside className="panel about-panel"><div className="about-logo">M</div><h3>Momentum</h3><span>Personal productivity workspace</span><p>Version 1.0.0</p><div className="about-divider"/><div><small>STORAGE</small><b>IndexedDB + private cloud</b></div><div><small>APP MODE</small><b>Progressive Web App</b></div><div><small>SYNC</small><b>Private key sync</b></div></aside></div>
         </>}
       </div>
     </main>
