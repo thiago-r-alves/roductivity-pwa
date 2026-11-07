@@ -4,3 +4,191 @@
 @media(max-width:1120px){.sidebar{width:218px}.main-area{margin-left:218px}.page-content{padding:30px 25px 60px}.habits-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-grid{grid-template-columns:1fr 1fr}.settings-layout{grid-template-columns:1fr 220px}}
 @media(max-width:850px){.sidebar{width:68px;padding:20px 8px}.brand{justify-content:center;margin:0 0 35px}.brand>span,.workspace-label,.nav-item span,.nav-item small,.offline-card,.profile-row>div:nth-child(2){display:none}.nav-item{justify-content:center;padding:0}.profile-row{justify-content:center;padding:13px 0 0}.main-area{margin-left:68px}.topbar{padding:0 22px}.page-content{padding:25px 20px 55px}.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-grid{grid-template-columns:1fr}.calendar-layout{grid-template-columns:1fr}.statistics-grid{grid-template-columns:1fr}.settings-layout{grid-template-columns:1fr}.about-panel{display:none}}
 @media(max-width:600px){.topbar{height:56px;padding:0 15px}.connection{font-size:0}.topbar-right{gap:8px}.page-content{padding:22px 14px 45px}.page-heading{align-items:flex-start;flex-direction:column;margin-bottom:20px}.page-heading h1{font-size:24px}.heading-actions{width:100%}.stat-grid{gap:8px}.stat-card{padding:12px;min-height:103px}.stat-card strong{font-size:22px}.panel{padding:14px}.task-row{grid-template-columns:18px minmax(0,1fr) 28px;gap:8px}.task-row .priority-tag,.task-row .status-select{display:none}.task-list-header{grid-template-columns:minmax(0,1fr) 28px}.task-list-header span:nth-child(2),.task-list-header span:nth-child(3){display:none}.task-list-header span:first-child{padding-left:28px}.kanban-grid{grid-template-columns:1fr}.habits-grid{grid-template-columns:1fr}.habit-intro{align-items:flex-start;padding:13px}.intro-today{margin-left:auto}.calendar-grid{gap:3px}.calendar-cell{min-height:63px;padding:5px 3px}.calendar-task{font-size:7px;padding:2px}.calendar-date{font-size:9px}.calendar-weekday{font-size:8px}.form-grid{grid-template-columns:1fr}.full-width{grid-column:auto}.category-chart{grid-template-columns:1fr}.category-legend{padding:0 14px 12px}.filter-group{gap:5px}.select-wrap{gap:4px;font-size:9px}.select-wrap select{padding:6px 5px;max-width:100px}.toolbar{align-items:flex-start}.modal-card{padding:18px}.toast-message{left:12px;right:12px;bottom:14px;justify-content:center}}
+
+
+/* Safari / iOS form-control normalization */
+:root {
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+input:not([type="file"]),
+select,
+textarea {
+  -webkit-appearance: none;
+  appearance: none;
+  color-scheme: dark;
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid #3b3548;
+  border-radius: 8px;
+  background-color: #121019;
+  color: #f3f0fb;
+  caret-color: #b8a0ff;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.field input:not([type="file"]),
+.field select,
+.field textarea,
+.select-wrap select,
+.status-select,
+.kanban-card select {
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #3b3548;
+  border-radius: 8px;
+  background-color: #121019;
+  color: #f3f0fb;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 450;
+  line-height: 1.4;
+  letter-spacing: 0;
+  box-shadow: inset 0 1px 0 #ffffff05;
+  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+
+select,
+.field select,
+.select-wrap select,
+.status-select,
+.kanban-card select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23b9a5f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 11px center;
+  background-size: 15px 15px;
+}
+
+.select-wrap select {
+  min-width: 112px;
+}
+
+.status-select {
+  max-width: 140px;
+  padding: 7px 32px 7px 9px;
+  font-size: 11px;
+}
+
+.kanban-card select {
+  width: 100%;
+}
+
+.field input:not([type="file"]):focus,
+.field select:focus,
+.field textarea:focus,
+.select-wrap select:focus,
+.status-select:focus,
+.kanban-card select:focus {
+  outline: none;
+  border-color: #9b83f6;
+  background-color: #15121e;
+  box-shadow: 0 0 0 3px #9b83f626, inset 0 1px 0 #ffffff08;
+}
+
+input:not([type="file"]):focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #a78bfa;
+  outline-offset: 2px;
+}
+
+input:not([type="file"])::placeholder,
+textarea::placeholder {
+  color: #777285;
+  opacity: 1;
+}
+
+input:not([type="file"]):-webkit-autofill,
+input:not([type="file"]):-webkit-autofill:hover,
+input:not([type="file"]):-webkit-autofill:focus {
+  -webkit-text-fill-color: #f3f0fb;
+  -webkit-box-shadow: 0 0 0 1000px #121019 inset;
+  caret-color: #b8a0ff;
+  border: 1px solid #5e4a80;
+  transition: background-color 9999s ease-out 0s;
+}
+
+.field input[type="date"],
+.field input[type="time"],
+.field input[type="number"] {
+  color-scheme: dark;
+  min-height: 44px;
+}
+
+.field input[type="date"]::-webkit-date-and-time-value,
+.field input[type="time"]::-webkit-date-and-time-value {
+  min-height: 1.4em;
+  text-align: left;
+}
+
+.field input[type="date"]::-webkit-calendar-picker-indicator,
+.field input[type="time"]::-webkit-calendar-picker-indicator {
+  opacity: .82;
+  filter: invert(72%) sepia(20%) saturate(1100%) hue-rotate(213deg);
+  cursor: pointer;
+}
+
+select option {
+  background-color: #17141f;
+  color: #f3f0fb;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 767px) {
+  .field input:not([type="file"]),
+  .field select,
+  .field textarea,
+  .select-wrap select,
+  .status-select,
+  .kanban-card select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .field textarea {
+    min-height: 88px;
+  }
+}
+
+@media (max-width: 600px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .select-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 0;
+    gap: 7px;
+  }
+
+  .select-wrap select {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .view-toggle {
+    align-self: flex-end;
+  }
+}
