@@ -4,7 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "predev": "node scripts/restore-sources.mjs",
     "dev": "vite --host 0.0.0.0",
+    "prebuild": "node scripts/restore-sources.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0"
   },
