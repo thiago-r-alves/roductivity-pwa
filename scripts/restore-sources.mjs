@@ -3,8 +3,13 @@ import { gunzipSync } from "node:zlib";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-const sourceDir = fileURLToPath(new URL("../src/", import.meta.url));
+const sourceDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../src");
 for (const file of ["App.tsx", "style.css"]) {
-  const compressed = await readFile(path.join(sourceDir, `${file}${".gz"}`));
-  await writeFile(path.join(sourceDir, file), gunzipSync(compressed));
+  const destination = path.join(sourceDir, file);
+  let current = "";
+  try { current = await readFile(destination, "utf8"); } catch {}
+  const isPlaceholder = current.startsWith("// RESTORE_FROM_GZIP") || current.startsWith("/* RESTORE_FROM_GZIP */");
+  if (!isPlaceholder) continue;
+  const compressed = await readFile(`${destination}.gz`);
+  await writeFile(destination, gunzipSync(compressed));
 }
