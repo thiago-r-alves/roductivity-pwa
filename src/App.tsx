@@ -1,7 +1,7 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
-  Activity, Archive, BarChart3, CalendarDays, Check, CheckCircle2, ChevronLeft,
+  Activity, Archive, BarChart3, Bell, CalendarDays, Check, CheckCircle2, ChevronLeft,
   ChevronRight, Circle, Clock3, Download, Flame, LayoutDashboard, List, ListTodo,
   MoreHorizontal, Pencil, Plus, Search, Settings, Target, Trash2, Upload, Wifi, X
 } from 'lucide-react';
@@ -174,7 +174,7 @@ function App() {
     const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'momentum-backup-' + today() + '.json'; a.click(); URL.revokeObjectURL(url); flash('Backup exported');
   };
   const exportCsv = () => {
-    const q = (v: string) => '"' + String(v).replaceAll('"', '""') + '"';
+    const q = (v: string) => '"' + String(v).replace(/"/g, '""') + '"';
     const rows = [['Title','Description','Category','Priority','Status','Due date','Due time'], ...data.tasks.map((t: Task) => [t.title,t.description,t.category,t.priority,t.status,t.dueDate,t.dueTime])];
     const blob = new Blob([rows.map(row => row.map(v => q(String(v))).join(',')).join('\n')], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'momentum-tasks-' + today() + '.csv'; a.click(); URL.revokeObjectURL(url); flash('CSV exported');
