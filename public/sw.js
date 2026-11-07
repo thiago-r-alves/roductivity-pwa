@@ -1,4 +1,4 @@
-const CACHE='momentum-shell-v4';
+const CACHE='momentum-shell-v5';
 const ASSETS=['/','/index.html','/manifest.webmanifest','/icon.svg','/apple-touch-icon.png'];
 self.addEventListener('install',event=>event.waitUntil(Promise.all([caches.open(CACHE).then(cache=>cache.addAll(ASSETS)),self.skipWaiting()])));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
