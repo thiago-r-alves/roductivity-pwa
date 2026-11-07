@@ -267,7 +267,7 @@ function App() {
       <div className="sidebar-bottom"><div className="offline-card"><i className="online-indicator"/><div><b>{online ? 'Local workspace ready' : 'Working offline'}</b><small>Your data stays on this device</small></div></div><div className="profile-row"><div className="avatar">T</div><div><b>Personal workspace</b><small>Local account</small></div></div></div>
     </aside>
     <main className="main-area">
-      <header className="topbar"><div className="breadcrumbs"><span>Workspace</span><i>/</i><b>{page}</b></div><div className="topbar-right"><span className="connection"><Wifi size={14}/> Local-first</span><button className="icon-button" onClick={() => setPage('Settings')}><Settings size={17}/></button><div className="avatar small-avatar">T</div></div></header>
+      <header className="topbar"><div className="breadcrumbs"><span>Workspace</span><i>/</i><b>{page}</b></div><div className="topbar-right"><button className="cloud-shortcut" onClick={() => setPage('Settings')} title="Open cloud sync settings"><Cloud size={14}/><span>Cloud sync</span></button><button className="icon-button" onClick={() => setPage('Settings')} aria-label="Settings"><Settings size={17}/></button><div className="avatar small-avatar">T</div></div></header>
       <div className="page-content">
         {page === 'Dashboard' && <>
           {heading('Good to see you.', 'A little progress today goes a long way.', <button className="button primary" onClick={() => setTaskModal('new')}><Plus size={15}/> New task</button>)}
